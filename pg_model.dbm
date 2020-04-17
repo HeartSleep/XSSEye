@@ -1,0 +1,285 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+CAUTION: Do not modify this file unless you know what you are doing.
+         Unexpected results may occur if the code is changed deliberately.
+-->
+<dbmodel pgmodeler-ver="0.9.3-alpha" last-position="731,282" last-zoom="1" max-obj-count="7"
+	 default-schema="public" default-owner="xsseye_user">
+<role name="xsseye_user"
+      login="true"
+      encrypted="true"
+      password="e7wnrh30hbs">
+</role>
+
+<database name="xsseye" encoding="UTF8" is-template="false" allow-conns="true" prepend-at-bod="true">
+	<prepended-sql><![CDATA[CREATE EXTENSION "uuid-ossp";]]></prepended-sql>
+</database>
+
+<schema name="public" layer="0" fill-color="#e1e1e1" sql-disabled="true">
+</schema>
+
+<schema name="users" layer="0" rect-visible="true" fill-color="#e1e1e1">
+	<role name="xsseye_user"/>
+</schema>
+
+<table name="user" layer="0" collapse-mode="2" max-obj-count="8" z-value="0">
+	<schema name="users"/>
+	<role name="xsseye_user"/>
+	<position x="420" y="420"/>
+	<column name="id" not-null="true">
+		<type name="serial" length="0"/>
+	</column>
+	<column name="username">
+		<type name="text" length="0"/>
+	</column>
+	<column name="password">
+		<type name="text" length="0"/>
+	</column>
+	<column name="email">
+		<type name="text" length="0"/>
+	</column>
+	<column name="telegram_id">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="all_domains" default-value="FALSE">
+		<type name="bool" length="0"/>
+	</column>
+	<column name="is_admin" default-value="FALSE">
+		<type name="bool" length="0"/>
+	</column>
+	<constraint name="users_id_pk" type="pk-constr" table="users.&quot;user&quot;">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+	<initial-data>
+<![CDATA[id•password•email•telegram_id•all_domains•is_admin•username⸣
+1•pbkdf2:sha256:150000$Sop807IB$8ff198d5bf01d040fe743327f5263f00659400be3799640871563d7b9880455a•nstikhomirov@gmail.com•106936600•TRUE•TRUE•NSTikhomirov]]>
+	</initial-data>
+</table>
+
+<table name="domains_access" layer="0" collapse-mode="2" max-obj-count="3" z-value="0">
+	<schema name="users"/>
+	<role name="xsseye_user"/>
+	<position x="400" y="760"/>
+	<column name="id" not-null="true">
+		<type name="serial" length="0"/>
+	</column>
+	<column name="domain">
+		<type name="text" length="0"/>
+	</column>
+	<constraint name="domains_access_id_pk" type="pk-constr" table="users.domains_access">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+
+	<customidxs object-type="column">
+		<object name="id_user" index="2"/>
+	</customidxs>
+
+	<customidxs object-type="constraint">
+		<object name="user_fk" index="1"/>
+	</customidxs>
+</table>
+
+<schema name="reports" layer="0" rect-visible="true" fill-color="#e1e1e1">
+	<role name="xsseye_user"/>
+</schema>
+
+<schema name="xsseye" layer="0" rect-visible="true" fill-color="#e1e1e1">
+	<role name="xsseye_user"/>
+</schema>
+
+<relationship name="users_has_many_domains_access" type="rel1n" layer="0"
+	 src-col-pattern="id_user"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 custom-color="#df2f89"
+	 src-table="users.&quot;user&quot;"
+	 dst-table="users.domains_access"
+	 src-required="false" dst-required="false"/>
+
+<constraint name="domains_access_users_uniq" type="uq-constr" table="users.domains_access">
+	<columns names="domain,id_user" ref-type="src-columns"/>
+</constraint>
+
+<table name="reports" layer="0" collapse-mode="2" max-obj-count="19" z-value="0">
+	<schema name="xsseye"/>
+	<role name="xsseye_user"/>
+	<position x="1360" y="320"/>
+	<column name="id" not-null="true">
+		<type name="serial" length="0"/>
+	</column>
+	<column name="uniq_id" not-null="true" default-value="uuid_generate_v4()">
+		<type name="uuid" length="0"/>
+	</column>
+	<column name="is_https" default-value="FALSE">
+		<type name="bool" length="0"/>
+	</column>
+	<column name="hostname">
+		<type name="text" length="0"/>
+	</column>
+	<column name="port" default-value="80">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="path" default-value="'/'">
+		<type name="text" length="0"/>
+	</column>
+	<column name="query">
+		<type name="text" length="0"/>
+	</column>
+	<column name="hash" default-value="''">
+		<type name="text" length="0"/>
+	</column>
+	<column name="client_ip">
+		<type name="inet" length="0"/>
+	</column>
+	<column name="user_agent" default-value="''">
+		<type name="text" length="0"/>
+	</column>
+	<column name="cookies" default-value="'{}'::json">
+		<type name="json" length="0"/>
+	</column>
+	<column name="localstorage" default-value="'{}'::json">
+		<type name="json" length="0"/>
+	</column>
+	<column name="additional_data" default-value="'{}'::json">
+		<type name="json" length="0"/>
+	</column>
+	<column name="referrer" default-value="''">
+		<type name="text" length="0"/>
+	</column>
+	<column name="added_time" default-value="CURRENT_TIMESTAMP">
+		<type name="timestamp with time zone" length="0" with-timezone="true"/>
+	</column>
+	<constraint name="reports_id_pk" type="pk-constr" table="xsseye.reports">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="reports_uniq_id_uniq" type="uq-constr" table="xsseye.reports">
+		<columns names="uniq_id" ref-type="src-columns"/>
+	</constraint>
+
+	<customidxs object-type="column">
+		<object name="id_payload" index="1"/>
+	</customidxs>
+
+	<customidxs object-type="constraint">
+		<object name="payloads_fk" index="2"/>
+	</customidxs>
+</table>
+
+<table name="payloads" layer="0" collapse-mode="2" max-obj-count="4" z-value="0">
+	<schema name="xsseye"/>
+	<role name="xsseye_user"/>
+	<position x="860" y="420"/>
+	<column name="id" not-null="true">
+		<type name="serial" length="0"/>
+	</column>
+	<column name="uniq_id" not-null="true" default-value="uuid_generate_v4()">
+		<type name="uuid" length="0"/>
+	</column>
+	<column name="public_id" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<constraint name="payloads_id_pk" type="pk-constr" table="xsseye.payloads">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="payloads_uniq_id_uniq" type="uq-constr" table="xsseye.payloads">
+		<columns names="uniq_id" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="payloads_public_id_uniq" type="uq-constr" table="xsseye.payloads">
+		<columns names="public_id" ref-type="src-columns"/>
+	</constraint>
+
+	<customidxs object-type="column">
+		<object name="id_owner" index="3"/>
+	</customidxs>
+
+	<customidxs object-type="constraint">
+		<object name="user_fk" index="2"/>
+	</customidxs>
+</table>
+
+<relationship name="users_has_many_payloads" type="rel1n" layer="0"
+	 src-col-pattern="id_owner"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 custom-color="#b4b9a2"
+	 src-table="users.&quot;user&quot;"
+	 dst-table="xsseye.payloads"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="payloads_has_many_reports" type="rel1n" layer="0"
+	 src-col-pattern="id_payload"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 custom-color="#1021d4"
+	 src-table="xsseye.payloads"
+	 dst-table="xsseye.reports"
+	 src-required="false" dst-required="false"/>
+
+<schema name="notifications_settings" layer="0" rect-visible="true" fill-color="#e1e1e1">
+	<role name="xsseye_user"/>
+</schema>
+
+<table name="telegram_bot" layer="0" collapse-mode="2" max-obj-count="3" z-value="0">
+	<schema name="notifications_settings"/>
+	<role name="xsseye_user"/>
+	<position x="860" y="760"/>
+	<column name="id" not-null="true">
+		<type name="serial" length="0"/>
+	</column>
+	<column name="access_token" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<column name="name">
+		<type name="text" length="0"/>
+	</column>
+	<constraint name="telegram_bot_id_pk" type="pk-constr" table="notifications_settings.telegram_bot">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="telegram_bot_logs" layer="0" collapse-mode="2" max-obj-count="4" z-value="0">
+	<schema name="notifications_settings"/>
+	<role name="xsseye_user"/>
+	<position x="1300" y="740"/>
+	<column name="id" not-null="true">
+		<type name="bigserial" length="0"/>
+	</column>
+	<column name="sended_text">
+		<type name="text" length="0"/>
+	</column>
+	<constraint name="telegram_bot_logs_id_pk" type="pk-constr" table="notifications_settings.telegram_bot_logs">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<relationship name="telegram_bot_has_many_telegram_bot_logs" type="rel1n" layer="0"
+	 src-col-pattern="id_bot"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 custom-color="#730815"
+	 src-table="notifications_settings.telegram_bot"
+	 dst-table="notifications_settings.telegram_bot_logs"
+	 src-required="false" dst-required="false"/>
+
+<relationship name="telegram_log_user_rs" type="rel1n" layer="0"
+	 src-col-pattern="id_user"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 custom-color="#3ae9f8"
+	 src-table="users.&quot;user&quot;"
+	 dst-table="notifications_settings.telegram_bot_logs"
+	 src-required="true" dst-required="false">
+	<label ref-type="name-label">
+		<position x="-1.9975" y="2.14212"/>
+	</label>
+</relationship>
+
+<index name="users_username_uniq" table="users.&quot;user&quot;"
+	 concurrent="false" unique="true" fast-update="false" buffering="false"
+	 index-type="btree" factor="0">
+		<idxelement use-sorting="false">
+			<expression><![CDATA[lower(username)]]></expression>
+		</idxelement>
+</index>
+
+</dbmodel>

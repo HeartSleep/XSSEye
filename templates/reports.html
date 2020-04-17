@@ -1,0 +1,146 @@
+{% extends 'template.html' %}
+{% block head %}
+<link
+        rel="stylesheet"
+        href="https://unpkg.com/bootstrap-table@1.16.0/dist/bootstrap-table.min.css"
+        crossorigin="anonymous">
+{% endblock %}
+
+{% block content %}
+<style>
+.item {
+    margin-bottom: 20px;
+}
+.filter-control {
+    padding-left: 5px;
+    padding-right: 5px;
+    padding-bottom: 5px;
+}
+</style>
+{% for host in hosts %}
+<div class="item">
+    <div toolbar-host-hash="{{host}}"><h3>Host - {{host}}</h3></div>
+    <table
+            id="table-{{md5(host)}}"
+            data-url="{{url_for('admin_api.get_reports', hostname=host)}}"
+            data-detail-view="true"
+            data-toggle="table"
+            data-detail-formatter="detail_formatter"
+            data-pagination="true"
+            data-toolbar="[toolbar-host-hash='{{host}}']"
+            data-search="true"
+            data-advanced-search="true"
+            data-show-refresh="true"
+            data-auto-refresh="true"
+            data-filter-control="true"
+            data-show-search-clear-button="true"
+            data-row-style="row_style"
+            >
+        <thead>
+
+        <tr>
+            <th data-field="humanize.url" data-sortable="true" data-escape="true" data-filter-control="input">Link</th>
+            <th data-field="client_ip"
+                data-escape="true"
+                data-sortable="true"
+                data-width="200px" data-filter-control="input">Client IP</th>
+            <th data-field="added_time"
+                data-formatter="date_formatter"
+                data-sortable="true"
+                data-width="200px" data-filter-control="input">Added</th>
+            <th data-field="uniq_id"
+                data-formatter="operate_formatter"
+                data-events="operate_events"
+                data-searchable="false"
+                data-width="61"></th>
+        </tr>
+        </thead>
+    </table>
+</div>
+{% endfor %}
+
+{% endblock %}
+
+{% block end_body %}
+<script
+        src="https://unpkg.com/bootstrap-table@1.16.0/dist/bootstrap-table.min.js"
+        crossorigin="anonymous"></script>
+
+<script
+        src="https://unpkg.com/bootstrap-table@1.16.0/dist/extensions/auto-refresh/bootstrap-table-auto-refresh.min.js"
+        crossorigin="anonymous"></script>
+
+<script
+        src="https://unpkg.com/bootstrap-table@1.16.0/dist/extensions/accent-neutralise/bootstrap-table-accent-neutralise.min.js"
+        crossorigin="anonymous"></script>
+
+<script
+        src="https://unpkg.com/bootstrap-table@1.16.0/dist/extensions/page-jump-to/bootstrap-table-page-jump-to.min.js"
+        crossorigin="anonymous"></script>
+
+<script
+        src="https://unpkg.com/bootstrap-table@1.16.0/dist/extensions/filter-control/bootstrap-table-filter-control.min.js"
+        crossorigin="anonymous"></script>
+<script>
+    window.operate_events = {
+        'click [table-action="mark"]': function (e, value, row) {
+            debugger;
+            alert('You click mark action, uuid: ' + JSON.stringify(value))
+        },
+        'click [table-action="remove"]': function (e, value, row) {
+            alert('You click remove action, uuid: ' + JSON.stringify(value))
+        }
+    }
+
+    function operate_formatter(value, row, index) {
+        return [
+            '<a table-action="mark" href="javascript:void(0)" title="Mark">',
+            '<span data-feather="star"></span>',
+            '</a>  ',
+            '<a table-action="remove" href="javascript:void(0)" title="Remove">',
+            '<span data-feather="trash-2"></span>',
+            '</a>'
+        ].join('')
+    }
+
+    function date_formatter(value, row, index) {
+        var date = new Date(value)
+        return date.toLocaleDateString() + " " + date.toTimeString().split(' ')[0]
+    }
+
+    function detail_formatter(index, row) {
+        var html = []
+        $.each(row, function (key, value) {
+            html.push('<p><b>' + key + ':</b> ' + value + '</p>')
+        })
+        return html.join('')
+    }
+
+    function row_style(row, index) {
+        // mark - table-success
+        // new - table-primary
+        // active - table-acitve
+        // wtf - table-danger
+        return {
+            //css: {
+            //    color: 'blue'
+            //}
+            classes: ''
+        }
+    }
+
+    $.BootstrapTable.DEFAULTS.html.icon = '<span data-prefix="%s" data-feather="%s"></span>'
+    $('table').on('reset-view.bs.table', function() {
+        feather.replace();
+    }).bootstrapTable({
+        icons: {
+            clearSearch: 'delete',
+            advancedSearchIcon: 'search',
+            refresh: 'refresh-cw',
+            autoRefresh: 'watch',
+            detailOpen: 'plus',
+            detailClose: 'minus'
+        }
+    })
+</script>
+{% endblock %}
