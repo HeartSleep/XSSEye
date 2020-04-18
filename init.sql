@@ -1,4 +1,5 @@
--- Database generated with pgModeler (PostgreSQL Database Modeler).
+-- Prepended SQL commands --
+CREATE EXTENSION "uuid-ossp";-- ddl-end ---- Database generated with pgModeler (PostgreSQL Database Modeler).
 -- pgModeler  version: 0.9.3-alpha
 -- PostgreSQL version: 12.0
 -- Project Site: pgmodeler.io
@@ -16,7 +17,8 @@ CREATE ROLE xsseye_user WITH
 -- These commands were put in this file only as a convenience.
 -- -- object: xsseye | type: DATABASE --
 -- -- DROP DATABASE IF EXISTS xsseye;
--- CREATE DATABASE xsseye;
+-- CREATE DATABASE xsseye
+-- 	ENCODING = 'UTF8';
 -- -- ddl-end --
 -- 
 
@@ -59,6 +61,7 @@ CREATE TABLE users."user" (
 	password text,
 	email text,
 	telegram_id integer,
+	telegram_alert bool DEFAULT False,
 	all_domains bool DEFAULT FALSE,
 	is_admin bool DEFAULT FALSE,
 	CONSTRAINT users_id_pk PRIMARY KEY (id)
@@ -101,19 +104,20 @@ ALTER TABLE users.domains_access ADD CONSTRAINT domains_access_users_uniq UNIQUE
 CREATE TABLE xsseye.reports (
 	id serial NOT NULL,
 	id_payload integer,
-	uniq_id uuid,
+	uniq_id uuid NOT NULL DEFAULT uuid_generate_v4(),
 	is_https bool DEFAULT FALSE,
 	hostname text,
 	port integer DEFAULT 80,
 	path text DEFAULT '/',
 	query text,
-	hash text,
+	hash text DEFAULT '',
 	client_ip inet,
-	user_agent text,
+	user_agent text DEFAULT '',
 	cookies json DEFAULT '{}'::json,
 	localstorage json DEFAULT '{}'::json,
 	additional_data json DEFAULT '{}'::json,
-	referrer text,
+	referrer text DEFAULT '',
+	added_time timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
 	CONSTRAINT reports_id_pk PRIMARY KEY (id),
 	CONSTRAINT reports_uniq_id_uniq UNIQUE (uniq_id)
 
@@ -126,15 +130,20 @@ ALTER TABLE xsseye.reports OWNER TO xsseye_user;
 -- DROP TABLE IF EXISTS xsseye.payloads CASCADE;
 CREATE TABLE xsseye.payloads (
 	id serial NOT NULL,
-	uniq_id uuid,
+	uniq_id uuid NOT NULL DEFAULT uuid_generate_v4(),
 	public_id text NOT NULL,
 	id_owner integer,
+	hostname text,
+	port integer,
+	protocol text,
+	request text,
 	CONSTRAINT payloads_id_pk PRIMARY KEY (id),
-	CONSTRAINT payloads_uniq_id_uniq UNIQUE (uniq_id)
+	CONSTRAINT payloads_uniq_id_uniq UNIQUE (uniq_id),
+	CONSTRAINT payloads_public_id_uniq UNIQUE (public_id)
 
 );
 -- ddl-end --
-ALTER TABLE xsseye.payloads OWNER TO postgres;
+ALTER TABLE xsseye.payloads OWNER TO xsseye_user;
 -- ddl-end --
 
 -- object: user_fk | type: CONSTRAINT --
@@ -161,7 +170,10 @@ CREATE TABLE notifications_settings.telegram_bot (
 
 );
 -- ddl-end --
-ALTER TABLE notifications_settings.telegram_bot OWNER TO postgres;
+ALTER TABLE notifications_settings.telegram_bot OWNER TO xsseye_user;
+-- ddl-end --
+
+INSERT INTO notifications_settings.telegram_bot (id, access_token, name) VALUES (E'1', E'1201959201:AAHwtbSkdr_ro9qSvjb5CzGkOTYRSmj0UDs', E'XSSEye_bot');
 -- ddl-end --
 
 -- object: notifications_settings.telegram_bot_logs | type: TABLE --
@@ -175,7 +187,7 @@ CREATE TABLE notifications_settings.telegram_bot_logs (
 
 );
 -- ddl-end --
-ALTER TABLE notifications_settings.telegram_bot_logs OWNER TO postgres;
+ALTER TABLE notifications_settings.telegram_bot_logs OWNER TO xsseye_user;
 -- ddl-end --
 
 -- object: telegram_bot_fk | type: CONSTRAINT --

@@ -3,7 +3,7 @@
 CAUTION: Do not modify this file unless you know what you are doing.
          Unexpected results may occur if the code is changed deliberately.
 -->
-<dbmodel pgmodeler-ver="0.9.3-alpha" last-position="731,282" last-zoom="1" max-obj-count="7"
+<dbmodel pgmodeler-ver="0.9.3-alpha" last-position="0,129" last-zoom="1" max-obj-count="7"
 	 default-schema="public" default-owner="xsseye_user">
 <role name="xsseye_user"
       login="true"
@@ -22,7 +22,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<role name="xsseye_user"/>
 </schema>
 
-<table name="user" layer="0" collapse-mode="2" max-obj-count="8" z-value="0">
+<table name="user" layer="0" collapse-mode="2" max-obj-count="9" z-value="0">
 	<schema name="users"/>
 	<role name="xsseye_user"/>
 	<position x="420" y="420"/>
@@ -40,6 +40,9 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</column>
 	<column name="telegram_id">
 		<type name="integer" length="0"/>
+	</column>
+	<column name="telegram_alert" default-value="False">
+		<type name="bool" length="0"/>
 	</column>
 	<column name="all_domains" default-value="FALSE">
 		<type name="bool" length="0"/>
@@ -165,10 +168,10 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</customidxs>
 </table>
 
-<table name="payloads" layer="0" collapse-mode="2" max-obj-count="4" z-value="0">
+<table name="payloads" layer="0" collapse-mode="2" max-obj-count="9" z-value="0">
 	<schema name="xsseye"/>
 	<role name="xsseye_user"/>
-	<position x="860" y="420"/>
+	<position x="860" y="360"/>
 	<column name="id" not-null="true">
 		<type name="serial" length="0"/>
 	</column>
@@ -176,6 +179,18 @@ CAUTION: Do not modify this file unless you know what you are doing.
 		<type name="uuid" length="0"/>
 	</column>
 	<column name="public_id" not-null="true">
+		<type name="text" length="0"/>
+	</column>
+	<column name="hostname">
+		<type name="text" length="0"/>
+	</column>
+	<column name="port">
+		<type name="integer" length="0"/>
+	</column>
+	<column name="protocol">
+		<type name="text" length="0"/>
+	</column>
+	<column name="request">
 		<type name="text" length="0"/>
 	</column>
 	<constraint name="payloads_id_pk" type="pk-constr" table="xsseye.payloads">
@@ -222,7 +237,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 <table name="telegram_bot" layer="0" collapse-mode="2" max-obj-count="3" z-value="0">
 	<schema name="notifications_settings"/>
 	<role name="xsseye_user"/>
-	<position x="860" y="760"/>
+	<position x="880" y="760"/>
 	<column name="id" not-null="true">
 		<type name="serial" length="0"/>
 	</column>
@@ -235,6 +250,10 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<constraint name="telegram_bot_id_pk" type="pk-constr" table="notifications_settings.telegram_bot">
 		<columns names="id" ref-type="src-columns"/>
 	</constraint>
+	<initial-data>
+<![CDATA[id•access_token•name⸣
+1•1201959201:AAHwtbSkdr_ro9qSvjb5CzGkOTYRSmj0UDs•XSSEye_bot]]>
+	</initial-data>
 </table>
 
 <table name="telegram_bot_logs" layer="0" collapse-mode="2" max-obj-count="4" z-value="0">
