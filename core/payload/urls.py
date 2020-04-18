@@ -1,6 +1,6 @@
-from flask import Blueprint, abort, make_response, url_for
+from flask import Blueprint, make_response, url_for
 
-from core import Static
+from ..static import Static
 
 routes = Blueprint('generator', __name__)
 
@@ -13,4 +13,3 @@ def show(uid):
     }))
     resp.headers.add('Content-Type', 'text/javascript')
     return resp
-

@@ -1,5 +1,5 @@
-from core import Static
-from core.users.login import get_user
+from ..static import Static
+from ..users.login import get_user
 
 
 def get_reports_hosts():

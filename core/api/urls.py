@@ -16,7 +16,7 @@ def check_post_args(*args):
     return True
 
 
-@routes.before_app_request
+@routes.before_request
 def auth_check():
     if request.method != 'POST':
         abort(405)

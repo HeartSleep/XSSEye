@@ -1,6 +1,6 @@
 from werkzeug.security import check_password_hash
 
-from core import Static
+from ..static import Static
 
 
 def verify_password(username, password):

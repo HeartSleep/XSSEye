@@ -1,4 +1,5 @@
 from flask import Blueprint, jsonify
+
 from . import reports
 
 routes = Blueprint('admin_api', __name__)
