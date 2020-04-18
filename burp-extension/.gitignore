@@ -1,7 +1,8 @@
 .idea
 .gradle
 gradle
-!build/libs/*.jar
-build
+build/classes
+build/generated
+build/tmp
 gradlew
 gradlew.bat
