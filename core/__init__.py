@@ -4,6 +4,7 @@ from config import Config
 from .static import Static
 from .admin import urls as admin_urls
 from .admin.api import urls as admin_api_urls
+from .api import urls as public_api
 from .payload import urls as generator_urls
 from .payload.generator import Generator
 from .reports import urls as report_urls
@@ -19,6 +20,7 @@ def on_init():
 def register_blueprint(app):
     app.register_blueprint(attach(admin_urls.routes, Static.auth.login_required), url_prefix='/admin')
     app.register_blueprint(attach(admin_api_urls.routes, Static.auth.login_required), url_prefix='/admin/api')
+    app.register_blueprint(public_api.routes, url_prefix='/api')
     app.register_blueprint(generator_urls.routes, url_prefix='/')
     app.register_blueprint(report_urls.routes, url_prefix='/')
 

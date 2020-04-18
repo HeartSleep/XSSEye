@@ -27,9 +27,9 @@ import javax.swing.JOptionPane;
 
 class Config {
     public static Path configFilepath = null;
-    public static String apiUrl = "http://127.0.0.1:5000/api/gen_payload";
-    public static String username = "admin";
-    public static String password = "p@ssw0rd!";
+    public static String apiUrl = "";
+    public static String username = "";
+    public static String password = "";
 
     public static Path getConfigPath() {
         if (configFilepath != null)
@@ -50,7 +50,7 @@ class Config {
         if (!Files.exists(Config.configFilepath)) {
             BurpExtender.stdout.println("Config file not found. Try to write default config.");
             String defaultConfig = "{\n" +
-                    "\t\"api_url\": \"https://l0r.ru/api/gen_payload\",\n" +
+                    "\t\"api_url\": \"https://l0r.ru/api/payloads/get_url\",\n" +
                     "\t\"username\": \"\",\n" +
                     "\t\"password\": \"\"\n" +
                     "}";
@@ -102,7 +102,7 @@ class PayloadStream extends FilterInputStream {
             post.setConfig(requestConfig.build());
 
             List<NameValuePair> urlParameters = new ArrayList<>();
-            urlParameters.add(new BasicNameValuePair("host", host));
+            urlParameters.add(new BasicNameValuePair("hostname", host));
             urlParameters.add(new BasicNameValuePair("port", String.valueOf(port)));
             urlParameters.add(new BasicNameValuePair("protocol", protocol));
             urlParameters.add(new BasicNameValuePair("request_base64", new String(Base64.getEncoder().encode(request))));
@@ -113,6 +113,9 @@ class PayloadStream extends FilterInputStream {
 
             try (CloseableHttpClient httpClient = HttpClients.createDefault();
                  CloseableHttpResponse response = httpClient.execute(post)) {
+                if (response.getStatusLine().getStatusCode() != 200) {
+                    throw new Exception("Invalid request. Server returned " + response.getStatusLine().toString());
+                }
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
                 response.getEntity().writeTo(baos);
                 return baos.toByteArray();
@@ -167,7 +170,7 @@ class PayloadStream extends FilterInputStream {
                         request
                 );
                 if (payloadUrl != null) {
-                    BurpExtender.stdout.println("Gotten Payload: " + payloadUrl);
+                    BurpExtender.stdout.println("Got a Payload URL: " + new String(payloadUrl));
                     for (int i = 0; i < search.length; i++)
                         inQueue.remove();
 
@@ -175,7 +178,7 @@ class PayloadStream extends FilterInputStream {
                         outQueue.offer((int) b);
                 } else {
                     outQueue.add(inQueue.remove());
-                    BurpExtender.stdout.println("Error in try of getting payload");
+                    BurpExtender.stdout.println("Error trying to get payload url");
                 }
             } else {
                 outQueue.add(inQueue.remove());
@@ -197,7 +200,7 @@ public class BurpExtender implements IBurpExtender, IHttpListener {
         this.stdout = new PrintWriter(callbacks.getStdout(), true);
         this.stderr = new PrintWriter(callbacks.getStderr(), true);
         this.callbacks = callbacks;
-        callbacks.setExtensionName("XSSEye Payload Getter");
+        callbacks.setExtensionName("XSSEye Burp Extension");
         Config.loadConfig();
         callbacks.registerHttpListener((IHttpListener) this);
 
