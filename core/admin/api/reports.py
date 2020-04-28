@@ -11,9 +11,9 @@ def get_all(hostname):
     with Static.psql.cursor() as cursor:
         #  TODO: Need refactor sql query
         cursor.execute("""
-        SELECT reports.* FROM xsseye.reports WHERE id_payload IN(
-            SELECT payloads.id FROM xsseye.payloads WHERE id_owner=%(user_id)s
-        ) AND hostname=%(hostname)s
+        SELECT r.*, row_to_json(p.*) as payload FROM xsseye.reports r
+        JOIN xsseye.payloads p
+            ON r.hostname=%(hostname)s AND (r.id_payload=p.id) AND (p.id_owner=%(user_id)s)
         """, {
             'user_id': user_info['id'],
             'hostname': hostname
@@ -23,11 +23,12 @@ def get_all(hostname):
 
         def handle_row(row):
             row = dict(zip(column_names, row))
-            url = ('https' if row['is_https'] else 'http') + '://' + \
+            url = row['protocol'] + '://' + \
                   row['hostname'] + \
                   (
                       ''
-                      if (row['is_https'] and row['port'] == 443) or (not row['is_https'] and row['port'] == 80)
+                      if (row['protocol'] == 'https' and row['port'] == 443) or
+                         (row['protocol'] != 'https' and row['port'] == 80)
                       else ':' + str(row['port'])
                   ) + '/' + row['path'].lstrip('/') + \
                   ('?' + row['query'] if row['query'] is not None and len(row['query']) > 0 else '') + \

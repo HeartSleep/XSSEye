@@ -3,12 +3,10 @@
 CAUTION: Do not modify this file unless you know what you are doing.
          Unexpected results may occur if the code is changed deliberately.
 -->
-<dbmodel pgmodeler-ver="0.9.3-alpha" last-position="0,129" last-zoom="1" max-obj-count="7"
+<dbmodel pgmodeler-ver="0.9.3-alpha" last-position="328,277" last-zoom="1" max-obj-count="7"
 	 default-schema="public" default-owner="xsseye_user">
 <role name="xsseye_user"
-      login="true"
-      encrypted="true"
-      password="e7wnrh30hbs">
+      login="true">
 </role>
 
 <database name="xsseye" encoding="UTF8" is-template="false" allow-conns="true" prepend-at-bod="true">
@@ -53,10 +51,6 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<constraint name="users_id_pk" type="pk-constr" table="users.&quot;user&quot;">
 		<columns names="id" ref-type="src-columns"/>
 	</constraint>
-	<initial-data>
-<![CDATA[id•password•email•telegram_id•all_domains•is_admin•username⸣
-1•pbkdf2:sha256:150000$Sop807IB$8ff198d5bf01d040fe743327f5263f00659400be3799640871563d7b9880455a•nstikhomirov@gmail.com•106936600•TRUE•TRUE•NSTikhomirov]]>
-	</initial-data>
 </table>
 
 <table name="domains_access" layer="0" collapse-mode="2" max-obj-count="3" z-value="0">
@@ -250,10 +244,6 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<constraint name="telegram_bot_id_pk" type="pk-constr" table="notifications_settings.telegram_bot">
 		<columns names="id" ref-type="src-columns"/>
 	</constraint>
-	<initial-data>
-<![CDATA[id•access_token•name⸣
-1•1201959201:AAHwtbSkdr_ro9qSvjb5CzGkOTYRSmj0UDs•XSSEye_bot]]>
-	</initial-data>
 </table>
 
 <table name="telegram_bot_logs" layer="0" collapse-mode="2" max-obj-count="4" z-value="0">

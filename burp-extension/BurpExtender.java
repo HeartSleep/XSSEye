@@ -16,6 +16,7 @@ import java.io.*;
 import java.util.*;
 import java.lang.System;
 import java.nio.file.*;
+import java.util.regex.Pattern;
 
 import org.json.*;
 
@@ -24,6 +25,7 @@ class Config {
     public static String apiUrl = "";
     public static String username = "";
     public static String password = "";
+    private final static Pattern RTRIM = Pattern.compile("[/\\]+$");
 
     public static Path getConfigPath() {
         if (configFilepath != null)
@@ -44,7 +46,7 @@ class Config {
         if (!Files.exists(Config.configFilepath)) {
             BurpExtender.stdout.println("Config file not found. Try to write default config.");
             String defaultConfig = "{\n" +
-                    "\t\"api_url\": \"https://l0r.ru/api/payloads/get_url\",\n" +
+                    "\t\"api_url\": \"https://xss.local/api/\",\n" +
                     "\t\"username\": \"\",\n" +
                     "\t\"password\": \"\"\n" +
                     "}";
@@ -65,7 +67,7 @@ class Config {
             Config.getConfigPath();
         try {
             JSONObject jsonObject = new JSONObject(new String(Files.readAllBytes(Config.configFilepath)));
-            Config.apiUrl = jsonObject.getString("api_url");
+            Config.apiUrl = RTRIM.matcher(jsonObject.getString("api_url")).replaceAll("");
             Config.username = jsonObject.getString("username");
             Config.password = jsonObject.getString("password");
         } catch (Exception e) {
@@ -78,15 +80,15 @@ class PayloadStream extends FilterInputStream {
     /*
      * System vars
      */
-    final String hostname, protocol;
-    final int port;
-    final byte[] search, request;
+    String hostname, protocol;
+    int port;
+    byte[] search, request;
 
 
     private byte[] getPayloadURL(String host, int port, String protocol, byte[] request) {
         Config.loadConfig();
         try {
-            HttpPost post = new HttpPost(Config.apiUrl);
+            HttpPost post = new HttpPost(Config.apiUrl + "/payloads/get_url");
 
             RequestConfig.Builder requestConfig = RequestConfig.custom();
             requestConfig.setConnectTimeout(3 * 1000);

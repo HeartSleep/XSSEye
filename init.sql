@@ -8,8 +8,7 @@ CREATE EXTENSION "uuid-ossp";-- ddl-end ---- Database generated with pgModeler (
 -- object: xsseye_user | type: ROLE --
 -- DROP ROLE IF EXISTS xsseye_user;
 CREATE ROLE xsseye_user WITH 
-	LOGIN
-	ENCRYPTED PASSWORD 'e7wnrh30hbs';
+	LOGIN;
 -- ddl-end --
 
 
@@ -69,9 +68,6 @@ CREATE TABLE users."user" (
 );
 -- ddl-end --
 ALTER TABLE users."user" OWNER TO xsseye_user;
--- ddl-end --
-
-INSERT INTO users."user" (id, password, email, telegram_id, all_domains, is_admin, username) VALUES (E'1', E'pbkdf2:sha256:150000$Sop807IB$8ff198d5bf01d040fe743327f5263f00659400be3799640871563d7b9880455a', E'nstikhomirov@gmail.com', E'106936600', E'TRUE', E'TRUE', E'NSTikhomirov');
 -- ddl-end --
 
 -- object: users.domains_access | type: TABLE --
@@ -171,9 +167,6 @@ CREATE TABLE notifications_settings.telegram_bot (
 );
 -- ddl-end --
 ALTER TABLE notifications_settings.telegram_bot OWNER TO xsseye_user;
--- ddl-end --
-
-INSERT INTO notifications_settings.telegram_bot (id, access_token, name) VALUES (E'1', E'1201959201:AAHwtbSkdr_ro9qSvjb5CzGkOTYRSmj0UDs', E'XSSEye_bot');
 -- ddl-end --
 
 -- object: notifications_settings.telegram_bot_logs | type: TABLE --

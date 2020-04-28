@@ -13,11 +13,16 @@ def dashboard():
 
 
 @routes.route('/screenshot/<uuid:uuid>')
-def get_screenshot(uuid):
+def view_screenshot(uuid):
     path = '%s.png' % (uuid,)
     if path is None:
         abort(404)
     return send_from_directory('screenshots', path)
+
+
+@routes.route('/screenshot_unavailable/')
+def screenshot_unavailable():
+    return send_from_directory('static', 'not_available.svg')
 
 
 @routes.route('/reports')
